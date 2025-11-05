@@ -1,0 +1,9 @@
+torch
+torchvision
+Pillow
+matplotlib
+tqdm
+ftfy
+regex
+git+https://github.com/openai/CLIP.git
+pymilvus[milvus-lite]
