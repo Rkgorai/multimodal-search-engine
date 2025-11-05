@@ -1,23 +1,30 @@
-﻿# Multimodal Search Engine
+# Multimodal Search Engine (PE Core Edition)
 
-This project implements a **text-to-image semantic search system** using **CLIP** embeddings and **Milvus Lite** as a vector database.  
-It allows you to index a folder of images once, then retrieve the most relevant images given a natural language query.
+This project implements a **text-to-image semantic search system** using **PE Core (Perception Embeddings by Meta)** as the embedding model and **Milvus Lite** as a vector database.  
+The system indexes a dataset of images once and allows retrieving the most relevant images using natural language queries.
 
 ---
 
 ## Features
 
-- **Text → Image Search** using CLIP's shared embedding space
-- **Image indexing** into a lightweight on-disk vector database (Milvus Lite)
-- **Cosine similarity retrieval**
-- **Visualization** of top matching images
-- Modular design allowing future embedding model upgrades
+- **Text → Image Retrieval** using PE Core shared embedding space
+- **Local vector database** powered by Milvus Lite
+- **Cosine similarity search** for semantic relevance
+- **Visualization** of result images
+- **Modular design** supporting future model upgrades
 
 ---
 
 ## Installation
 
-### Install dependencies
+### 1. Clone and install PE Core
+```bash
+git clone https://github.com/facebookresearch/perception_models.git
+cd perception_models
+pip install -e .
+```
+
+### 2. Install project dependencies
 ```bash
 pip install -r requirements.txt
 ```
@@ -26,48 +33,54 @@ pip install -r requirements.txt
 
 ## Usage
 
-### 1. Set your image folder
-Edit the path in `create_and_search.py`:
+### Step 1 — Create / Index the Vector Database
+Edit the image dataset path in `create_db.py`, then run:
 
-```python
-image_folder = "/kaggle/input/coco-2017-dataset/coco2017/val2017"
-```
-
-### 2. Run indexing and search
 ```bash
-python create_and_search.py
+python create_db.py
 ```
 
-You will be prompted:
+This will:
+- Encode images using PE Core
+- Store embeddings + file paths inside Milvus Lite
+
+### Step 2 — Search the Database
+```bash
+python search_db.py
+```
+
+You will be prompted to enter a text query:
 
 ```
-Enter your query: a red car
+Enter search query: a red motorcycle on a street
 ```
 
-The top matches will display in a grid.
+Matching images will be displayed.
 
 ---
 
 ## Example Query
 
-**User Input**
+**Input**
 ```
-"dog running in a field"
+dog running in a field
 ```
 
 **Output**
-- Shows the top retrieved images
-- Displays similarity scores
+- Retrieves and displays the most semantically similar images
+- Shows similarity scores
 
 ---
 
 ## Project Structure
+
 ```
 .
-├── create_and_search.py      # Script for indexing + searching + visualization
-├── requirements.txt          # Dependency list
-├── notebook.ipynb            # Jupyter demo / experimentation notebook
-└── README.md                 # Documentation
+├── create_db.py             # Embeds images + creates vector DB
+├── search_db.py             # Performs text→image semantic retrieval
+├── requirements.txt         # Dependencies
+├── notebook.ipynb           # Optional exploration notebook
+└── README.md                # Documentation
 ```
 
 ---
@@ -75,18 +88,18 @@ The top matches will display in a grid.
 ## How It Works
 
 | Step | Description |
-|-----|-------------|
-| 1 | CLIP encodes each image into a feature vector |
-| 2 | CLIP encodes the text query into the same vector space |
-| 3 | Vectors are normalized for cosine similarity search |
-| 4 | Milvus Lite performs nearest-neighbor search |
-| 5 | Top matching images are displayed |
+|------|-------------|
+| 1 | PE Core encodes images into embeddings |
+| 2 | PE Core encodes text queries into the same embedding space |
+| 3 | Embeddings are normalized for cosine similarity |
+| 4 | Milvus Lite performs nearest-neighbor lookup |
+| 5 | Results are displayed with scores |
 
 ---
 
 ## Future Enhancements
 
-- Support for **newer vision-language models** (SigLIP, BLIP, EVA-CLIP)
-- Support for **video and document retrieval**
-- Optional **web UI (Streamlit / Gradio)**
-
+- Support for additional PE Core variants (ViT-L, ConvNext)
+- Optional Streamlit or Gradio web UI
+- Ability to scale to full Milvus Server for large datasets
+- Potential extension to multimodal retrieval (video/audio)
